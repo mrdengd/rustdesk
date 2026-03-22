@@ -185,13 +185,23 @@ pub fn core_main() -> Option<Vec<String>> {
         {
             crate::platform::macos::try_remove_temp_update_dir(None);
         }
-
         #[cfg(windows)]
         {
             crate::platform::try_remove_temp_update_files();
             hbb_common::config::PeerConfig::preload_peers();
         }
         std::thread::spawn(move || crate::start_server(false, no_server));
+
+        // ========== 无头模式：不启动 Flutter GUI，直接阻塞运行 ==========
+        log::info!("Headless mode: running as service without UI");
+        // 等待 server 线程，防止进程退出
+        loop {
+            std::thread::sleep(std::time::Duration::from_secs(1));
+        }
+        // 不会执行到这里，但需要类型匹配
+        #[allow(unreachable_code)]
+        return None;
+        // ================================================================
     } else {
         #[cfg(windows)]
         {

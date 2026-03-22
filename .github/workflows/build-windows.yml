@@ -5,6 +5,9 @@ on:
     branches: [ "master" ]
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: windows-2022
@@ -27,8 +30,8 @@ jobs:
 
       - name: Install vcpkg dependencies
         run: |
-          $env:VCPKG_ROOT = $env:VCPKG_ROOT
-          vcpkg install libvpx:x64-windows-static libyuv:x64-windows-static opus:x64-windows-static aom:x64-windows-static
+          vcpkg install --triplet x64-windows-static
+        shell: pwsh
 
       - name: Install LLVM
         run: choco install llvm -y
